@@ -1,0 +1,27 @@
+import pandas as pd
+import numpy as np
+path_data_file = 'data.txt'
+path_REscored_file = 'REscored.txt'
+path_output_file = 'proba.txt'
+# Считываем данные из файлов
+data = pd.read_csv(path_data_file, header=None)
+rescored = pd.read_csv(path_REscored_file, sep='\t', header=None)
+# Преобразуем данные для удобства сравнения времени
+data[0] = data[0].astype(str)
+rescored[0] = rescored[0].astype(str)
+
+# Создаем новый столбец в data, содержащий второй элемент строки из REscored.txt
+data['new_column'] = ''
+
+# Проходим по данным из REscored.txt и добавляем второй элемент к соответствующим строкам из data
+
+for index, row in rescored.iterrows():
+    time = row[0]
+    value = row[1]
+    mask = data[0] == time
+    data.loc[mask, 'new_column'] = value
+
+# Записываем результат в новый файл
+data.to_csv(path_output_file, header=False, index=False)
+
+print("Готово! Результаты записаны в файл proba.txt")

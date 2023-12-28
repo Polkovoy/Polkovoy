@@ -1,0 +1,31 @@
+print("Enter the correct path to the file data ")
+path_data = input()
+print("Enter the correct path to the file REscored ")
+path_rescored_file = input()
+print("Enter the correct path to the file output file ")
+path_output_file = input()
+# Открываем файлы для чтения
+with open(path_data, 'r') as data_file, open(path_rescored_file, 'r') as rescored_file, open(path_output_file, 'w') as output_file:
+    # Читаем строки из файлов
+    data_lines = data_file.readlines()
+    rescored_lines = rescored_file.readlines()
+    # Индексы текущих строк в файлах data и REscored
+    data_index = 0
+    rescored_index = 0   
+    # Пока не достигнут конец файла data
+    while data_index < len(data_lines) and rescored_index < len(rescored_lines):
+        data_time = float(data_lines[data_index].split(',')[0])  # Получаем время из строки файла data
+        rescored_time = float(rescored_lines[rescored_index].split(',')[0])  # Получаем время из строки файла REscored
+
+        # Если время из файлов data и REscored совпадает, записываем строку из data с добавлением второго элемента строки из REscored
+        if data_time == rescored_time:
+            output_file.write(data_lines[data_index].strip() + ',' + rescored_lines[rescored_index].split(',')[1] + '\n')
+            rescored_index += 1# Переходим к следующей строке из файла
+        elif  rescored_index == 0 and rescored_time > data_time:
+            output_file.write(data_lines[data_index].strip() + ',0\n')  # Вставляем "0" вторым элементом, если время не совпадает
+        else:
+            output_file.write(data_lines[data_index].strip() + ',' + rescored_lines[rescored_index].split(',')[1] + '\n') 
+        data_index +=1# Переходим к следующей строке из файла data.
+print(f"Program completed successfully, file write {path_output_file}")
+input()
+

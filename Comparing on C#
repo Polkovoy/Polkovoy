@@ -1,0 +1,71 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
+
+try
+{
+    Console.WriteLine("Enter the correct path to the file data.txt");
+    string pathData = Console.ReadLine();
+    ValidateFilePath(pathData);
+    Console.WriteLine("Enter the correct path to the file REscored.txt");
+    string pathRescored = Console.ReadLine();
+    ValidateFilePath(pathRescored);
+    Console.WriteLine("Inter the correct path to the OutPutFile.txt");
+    string pathOutPutFile = Console.ReadLine();
+    ValidateFilePath(pathOutPutFile);
+    if (File.Exists(pathData) && File.Exists(pathRescored) && File.Exists(pathOutPutFile))
+    {
+        // Чтение данных из файлов
+        string[] dataLines = File.ReadAllLines(path: pathData);
+        string[] rescoredLines = File.ReadAllLines(path: pathRescored);
+
+        // Создание нового списка, который будет содержать результаты объединения данных
+        List<string> newDataLines = new List<string>();
+
+        // Обработка данных для создания нового файла
+        int rescoredIndex = 0;
+        int dataIndex = 0;
+        int i = 0;
+        while (dataIndex < dataLines.Length && rescoredIndex < rescoredLines.Length)
+        {
+            string time_data = dataLines[dataIndex].Split(',')[0];
+            string time_rescored = rescoredLines[rescoredIndex].Split(',')[0];
+            //char end_line = '0';
+            //time_data = time_data.TrimEnd(end_line);
+            if (time_rescored == time_data)
+            { // Объединение строк данных и rescored
+                string combinedLine = $"{dataLines[dataIndex]},{rescoredLines[rescoredIndex].Split(',')[1]}";
+                newDataLines.Add(combinedLine);
+                rescoredIndex += 1;
+                i++;
+            }
+            else if (rescoredIndex == 0 && i == 0)    
+            {
+                string combinedLine = $"{dataLines[dataIndex]},0";
+                newDataLines.Add(combinedLine);
+            }
+            else
+            {
+                 string combinedLine = $"{dataLines[dataIndex]},{rescoredLines[rescoredIndex - 1].Split(',')[1]}";
+                 newDataLines.Add(combinedLine);
+            }
+            dataIndex += 1;
+        }
+    File.WriteAllLines(path: pathOutPutFile, contents: newDataLines);
+    Console.WriteLine("Inter to end program");
+    Console.ReadKey();
+    }
+    else
+    { Console.WriteLine("One or more input files do not exist."); }
+}
+catch (Exception e)
+{ Console.WriteLine("An error occurred: " + e.Message); }
+
+void ValidateFilePath(string filePath)
+{
+    if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+    {
+        throw new FileNotFoundException("The file path is invalid or does not exist.");
+    }
+}
